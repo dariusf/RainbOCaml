@@ -2,9 +2,13 @@ open Graphics
 
 let border = 5
 let side = 120
-let size = 4 * side + 5 * border
+let size = 3 * side + 4 * border
 
 let mode = ref Addition
+
+let not_mode = function
+  |Addition -> Substract
+  |Substract -> Addition
 
 let get_color = function
   | Blue -> blue
@@ -13,9 +17,9 @@ let get_color = function
   | Cyan -> cyan
   | Yellow -> yellow
   | Magenta -> magenta
+  | White -> white
 
-
-let draw_square y x case =
+let draw_square x y case =
   let fill () =
     fill_rect ((succ x) * border + x * side)
       ((succ y) * border + y * side)
@@ -23,7 +27,6 @@ let draw_square y x case =
   in
   match case with
   | Color color -> set_color (get_color color); fill ()
-  | White -> set_color white; fill ()
   | Empty -> ()
 
 let draw_background () =
@@ -39,14 +42,14 @@ let draw_background () =
       fill_rect 0 0 (size_x ()) (size_y ());
       set_color black
     end;
-  for a = 0 to 4 do
+  for a = 0 to 3 do
     fill_rect 0 (a * (border + side)) size border;
     fill_rect (a * (border + side)) 0  border size
   done
 
 let display_grid grid =
   draw_background ();
-  Array.iteri (fun y line -> Array.iteri (draw_square y) line) grid
+  Array.iteri (fun x line -> Array.iteri (draw_square x) line) grid
 
 let get_mode () = match !mode with
   | Substract -> sub
@@ -60,7 +63,10 @@ let move key grid =
     |'6' -> fusion (get_mode ()) Right grid
     |'8' -> fusion (get_mode ()) Up grid
   end;
-  display_grid grid
+  display_grid grid;
+  Random.self_init ();
+  if ((Random.int 3) mod 3) = 0
+  then mode := (not_mode !mode)
 
 let toto () =
   open_graph (Printf.sprintf "%dx%d" size size);
