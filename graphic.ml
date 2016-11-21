@@ -1,4 +1,5 @@
 open Graphics
+open Colors
 
 let border = 5
 let side = 120
@@ -62,14 +63,15 @@ let move key grid =
     |'4' -> fusion (get_mode ()) Left grid
     |'6' -> fusion (get_mode ()) Right grid
     |'8' -> fusion (get_mode ()) Up grid
+    | _ -> ()
   end;
   display_grid grid;
   Random.self_init ();
   if ((Random.int 3) mod 3) = 0
   then mode := (not_mode !mode)
 
-let toto () =
-  open_graph (Printf.sprintf "%dx%d" size size);
+let () =
+  open_graph (Printf.sprintf " %dx%d" size size);
   let grid = init_grid () in
   display_grid grid;
   loop_at_exit [Key_pressed] (fun event -> move event.key grid)
